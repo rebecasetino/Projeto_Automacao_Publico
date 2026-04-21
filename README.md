@@ -4,4 +4,4 @@ Objetivo: automatizar o processo de busca em uma aplicação web específica, si
 
 Ferramentas: selenium e pandas.
 
-Esse repositório contém o código do programa, porém com os nomes das funções, variáveis e seletores substituídos por termos genéricos a fim de preserver o processo. 
+Esse repositório contém o código do programa, porém com os nomes das funções, variáveis e seletores substituídos por termos genéricos a fim de preservar o processo. 
