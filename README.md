@@ -5,3 +5,8 @@ Objetivo: automatizar o processo de busca em uma aplicação web específica sim
 Ferramentas: selenium e pandas.
 
 Esse repositório contém o código do programa, porém com os nomes das funções, variáveis e seletores CSS substituídos por termos genéricos a fim de preservar o processo. 
+
+
+<img width="1062" height="1291" alt="fluxograma_automacao" src="https://github.com/user-attachments/assets/daca0898-60e1-400d-b088-0f83614e315c" />
+
+
