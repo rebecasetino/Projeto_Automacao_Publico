@@ -12,26 +12,26 @@ import config
 from driver import driver
 
 
-def acessar_sistema_e_preencher_login():
+def pesquisar_portal_e_preencher_login():
     driver.get(config.link)
 
-    campo_a = WebDriverWait(driver, 5).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "#campo_a"))
+    corretora = WebDriverWait(driver, 5).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "#Corretor"))
     )
-    campo_a.click()
-    campo_a.send_keys(config.corretora)
+    corretora.click()
+    corretora.send_keys(config.corretora)
 
-    campo_b = WebDriverWait(driver, 5).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "#campo_b"))
+    usuario = WebDriverWait(driver, 5).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "#Usuario"))
     )
-    campo_b.click()
-    campo_b.send_keys(config.usuario)
+    usuario.click()
+    usuario.send_keys(config.usuario)
 
-    campo_c = WebDriverWait(driver, 5).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "#campo_c"))
+    senha = WebDriverWait(driver, 5).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "#Senha"))
     )
-    campo_c.click()
-    campo_c.send_keys(config.senha)
+    senha.click()
+    senha.send_keys(config.senha)
 
 
 def switch_to_iframe_with_element(selector, by=By.CSS_SELECTOR):
@@ -49,12 +49,12 @@ def switch_to_iframe_with_element(selector, by=By.CSS_SELECTOR):
     return False
 
 
-def localizar_registro_por_criterio_1(valor_criterio_1, pendentes_criterio_2, indice):
+def localizar_linha_cadastro_pela_criterio_1(numero_criterio_1, busca_criterio_2_criterio_1_nao_localizadas, indice):
     time.sleep(1)
 
     try:
-        linhas = driver.find_elements(By.XPATH, "//td[@aria-describedby='Grid_Coluna1']")
-        print(f"Total de registros encontrados: {len(linhas)}")
+        linhas = driver.find_elements(By.XPATH, "//td[@aria-describedby='GridConsulta_InicioVigencia']")
+        print(f"Total de células encontradas na coluna vigência: {len(linhas)}")
 
         if len(linhas) == 0:
             try:
@@ -63,26 +63,26 @@ def localizar_registro_por_criterio_1(valor_criterio_1, pendentes_criterio_2, in
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "button.swal2-confirm.btn.btn-success"))
                 )
                 botao_alerta.click()
-                print(f"CRITERIO 1 NAO LOCALIZADO NO SISTEMA: {valor_criterio_1}")
+                print(f"criterio_1 NAO LOCALIZADA NO SITE: {numero_criterio_1}")
             except TimeoutException:
                 pass
 
-            pendentes_criterio_2.append({"criterio_1": valor_criterio_1, "indice": indice})
+            busca_criterio_2_criterio_1_nao_localizadas.append({"criterio_1": numero_criterio_1, "indice": indice})
             driver.switch_to.frame("ZonaInterna")
             return None
 
-        registro = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.XPATH, f"//*[contains(text(), '{valor_criterio_1}')]"))
+        linha_cadastro = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, f"//*[contains(text(), '{numero_criterio_1}')]"))
         )
-        print("Registro localizado:", registro.text)
-        return registro
+        print("Texto da célula:", linha_cadastro.text)
+        return linha_cadastro
 
     except StaleElementReferenceException:
-        registro = WebDriverWait(driver, 10).until(
+        linha_cadastro = WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.XPATH, "//*[contains(@id, ',0,1')]/td[7]"))
         )
-        print("Registro relocalizado:", registro.text)
-        return registro
+        print("Texto da célula (relocalizado):", linha_cadastro.text)
+        return linha_cadastro
 
     except TimeoutException:
         driver.switch_to.default_content()
@@ -90,48 +90,47 @@ def localizar_registro_por_criterio_1(valor_criterio_1, pendentes_criterio_2, in
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.swal2-confirm.btn.btn-success"))
         )
         botao_alerta.click()
-        pendentes_criterio_2.append({"criterio_1": valor_criterio_1, "indice": indice})
-        print(f"CRITERIO 1 NAO LOCALIZADO: {valor_criterio_1}")
-        switch_to_iframe_with_element("#seletor_criterio_1")
+        busca_criterio_2_criterio_1_nao_localizadas.append({"criterio_1": numero_criterio_1, "indice": indice})
+        print(f"criterio_1 NAO LOCALIZADA: {numero_criterio_1}")
+        switch_to_iframe_with_element("#Nocriterio_1Cia")
         return None
 
 
-def buscar_por_criterio_1(valor_criterio_1, pendentes_criterio_2, indice):
+def buscar_criterio_1(numero_criterio_1, busca_criterio_2_criterio_1_nao_localizadas, indice):
     time.sleep(1)
 
-    def _buscar(tentativa=1, max_tentativas=3):
+    for tentativa in range(1, 4):
         try:
-            campo_busca = WebDriverWait(driver, 30).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "#seletor_criterio_1"))
+            barra_pesquisa_criterio_1 = WebDriverWait(driver, 30).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "#Nocriterio_1Cia"))
             )
-            campo_busca.clear()
-            campo_busca.send_keys(str(valor_criterio_1))
-            campo_busca.send_keys(Keys.ENTER)
+            barra_pesquisa_criterio_1.clear()
+            barra_pesquisa_criterio_1.send_keys(str(numero_criterio_1))
+            barra_pesquisa_criterio_1.send_keys(Keys.ENTER)
 
-            print(f"Consulta realizada para criterio_1: {valor_criterio_1}")
+            print(f"Consulta realizada para criterio_1 {numero_criterio_1}")
 
-            return localizar_registro_por_criterio_1(
-                valor_criterio_1, pendentes_criterio_2, indice
+            return localizar_linha_cadastro_pela_criterio_1(
+                numero_criterio_1, busca_criterio_2_criterio_1_nao_localizadas, indice
             )
 
         except TimeoutException:
-            print(f"Timeout na tentativa {tentativa}/{max_tentativas} para criterio_1: {valor_criterio_1}")
-            if tentativa < max_tentativas:
+            print(f"Timeout na tentativa {tentativa}/3 para criterio_1 {numero_criterio_1}")
+            if tentativa < 3:
                 time.sleep(2)
-                return _buscar(tentativa + 1, max_tentativas)
-            else:
-                print(f"Todas as tentativas esgotadas para criterio_1: {valor_criterio_1}")
-                return False
 
-    return _buscar()
+                raise Exception(f"Tentativas esgotadas para criterio_1 {numero_criterio_1}")
+
+    print(f"Todas as tentativas esgotadas para criterio_1 {numero_criterio_1}")
+    raise Exception(f"Tentativas esgotadas para criterio_1 {numero_criterio_1}")
 
 
-def localizar_registro_por_criterio_2(valor_criterio_2, pendentes_criterio_3, df, indice):
+def localizar_linha_cadastro_pelo_criterio_2(criterio_2, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice):
     time.sleep(1)
 
     try:
-        linhas = driver.find_elements(By.XPATH, "//td[@aria-describedby='Grid_Coluna1']")
-        print(f"Total de registros encontrados: {len(linhas)}")
+        linhas = driver.find_elements(By.XPATH, "//td[@aria-describedby='GridConsulta_InicioVigencia']")
+        print(f"Total de células encontradas na coluna vigência: {len(linhas)}")
 
         if len(linhas) == 0:
             try:
@@ -140,49 +139,49 @@ def localizar_registro_por_criterio_2(valor_criterio_2, pendentes_criterio_3, df
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "button.swal2-confirm.btn.btn-success"))
                 )
                 botao_alerta.click()
-                print(f"CRITERIO 2 NAO LOCALIZADO NO SISTEMA: {valor_criterio_2}")
+                print(f"criterio_2 NAO LOCALIZADO NO SITE: {criterio_2}")
             except TimeoutException:
                 pass
 
-            pendentes_criterio_3.append({"indice": indice})
+            busca_nome_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
             driver.switch_to.frame("ZonaInterna")
             return None
 
-        data_referencia_excel = df.loc[indice, "CAMPO3"]
-        data_referencia_str = str(data_referencia_excel)
+        vigencia_excel = df.loc[indice, "CAMPO3"]
+        vigencia_excel_str = str(vigencia_excel)
 
-        if isinstance(data_referencia_excel, (datetime.datetime, pd.Timestamp)):
-            data_excel = data_referencia_excel.to_pydatetime() if hasattr(data_referencia_excel, "to_pydatetime") else data_referencia_excel
-            data_referencia_str = data_excel.strftime("%d/%m/%Y")
+        if isinstance(vigencia_excel, (datetime.datetime, pd.Timestamp)):
+            data_excel = vigencia_excel.to_pydatetime() if hasattr(vigencia_excel, "to_pydatetime") else vigencia_excel
+            vigencia_excel_str = data_excel.strftime("%d/%m/%Y")
         else:
-            data_referencia_str = str(data_referencia_excel).strip()
+            vigencia_excel_str = str(vigencia_excel).strip()
             try:
-                data_excel = datetime.datetime.strptime(data_referencia_str, "%d/%m/%Y")
+                data_excel = datetime.datetime.strptime(vigencia_excel_str, "%d/%m/%Y")
             except ValueError:
-                data_excel = datetime.datetime.strptime(data_referencia_str, "%d/%m/%y")
+                data_excel = datetime.datetime.strptime(vigencia_excel_str, "%d/%m/%y")
 
-        registro_encontrado = None
+        linha_cadastro = None
 
         for celula in linhas:
             driver.execute_script("arguments[0].scrollIntoView(true);", celula)
             time.sleep(0.3)
 
-            data_sistema = celula.get_attribute("title").strip()
+            vigencia_site = celula.get_attribute("title").strip()
             try:
-                data_site = datetime.datetime.strptime(data_sistema, "%d/%m/%Y")
+                data_site = datetime.datetime.strptime(vigencia_site, "%d/%m/%Y")
             except ValueError:
-                data_site = datetime.datetime.strptime(data_sistema, "%d/%m/%y")
+                data_site = datetime.datetime.strptime(vigencia_site, "%d/%m/%y")
 
             if data_site.month == data_excel.month and data_site.year == data_excel.year:
-                registro_encontrado = celula
+                linha_cadastro = celula
                 break
 
-        if registro_encontrado:
-            print("Criterio 2 localizado com data de referencia correta:", valor_criterio_2, f"{data_excel.month:02d}/{data_excel.year}")
-            return registro_encontrado
+        if linha_cadastro:
+            print("criterio_2 localizado com vigência correta:", criterio_2, f"{data_excel.month:02d}/{data_excel.year}")
+            return linha_cadastro
         else:
-            print(f"Criterio 2 {valor_criterio_2} encontrado, mas data de referencia {data_excel.month:02d}/{data_excel.year} nao confere")
-            pendentes_criterio_3.append({"indice": indice})
+            print(f"criterio_2 {criterio_2} encontrado no site, mas vigência {data_excel.month:02d}/{data_excel.year} não bate")
+            busca_nome_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
             return None
 
     except TimeoutException:
@@ -194,118 +193,113 @@ def localizar_registro_por_criterio_2(valor_criterio_2, pendentes_criterio_3, df
             botao_alerta.click()
         except TimeoutException:
             pass
-        pendentes_criterio_3.append({"indice": indice})
-        print(f"CRITERIO 2 NAO LOCALIZADO: {valor_criterio_2}")
+        busca_nome_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
+        print(f"criterio_2 NAO LOCALIZADO: {criterio_2}")
         driver.switch_to.frame("ZonaInterna")
         return None
 
 
-def buscar_por_criterio_2(valor_criterio_2, pendentes_criterio_3, df, indice):
+def buscar_criterio_2(criterio_2, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice):
     time.sleep(1)
 
-    def _buscar(tentativa=1, max_tentativas=3):
+    for tentativa in range(1, 4):
         try:
-            campo_busca = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "#seletor_criterio_2"))
+            barra_pesquisa_criterio_2 = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "#criterio_2"))
             )
-            campo_busca.click()
-            campo_busca.clear()
-            campo_busca.send_keys(str(valor_criterio_2))
-            campo_busca.send_keys(Keys.ENTER)
+            barra_pesquisa_criterio_2.click()
+            barra_pesquisa_criterio_2.clear()
+            barra_pesquisa_criterio_2.send_keys(str(criterio_2))
+            barra_pesquisa_criterio_2.send_keys(Keys.ENTER)
 
-            print(f"Consulta realizada para criterio_2: {valor_criterio_2}")
+            print(f"Consulta realizada para o criterio_2 {criterio_2}")
 
-            return localizar_registro_por_criterio_2(
-                valor_criterio_2, pendentes_criterio_3, df, indice
+            return localizar_linha_cadastro_pelo_criterio_2(
+                criterio_2, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice
             )
 
         except TimeoutException:
-            print(f"Timeout na tentativa {tentativa}/{max_tentativas} para criterio_2: {valor_criterio_2}")
-            if tentativa < max_tentativas:
+            print(f"Timeout na tentativa {tentativa}/3 para criterio_2 {criterio_2}")
+            if tentativa < 3:
                 time.sleep(2)
-                return _buscar(tentativa + 1, max_tentativas)
-            else:
-                print(f"Todas as tentativas esgotadas para criterio_2: {valor_criterio_2}")
-                return False
 
-        except Exception as e:
-            print(f"Erro ao buscar criterio_2 {valor_criterio_2}: {e}")
-            return False
+                raise Exception(f"Tentativas esgotadas para criterio_2 {criterio_2}")
 
-    return _buscar()
+    print(f"Todas as tentativas esgotadas para criterio_2 {criterio_2}")
+    raise Exception(f"Tentativas esgotadas para criterio_2 {criterio_2}")
 
 
-def localizar_registro_por_criterio_3(valor_criterio_3, itens_nao_localizados, df, indice):
+def localizar_linha_cadastro_pelo_criterio_3(criterio_3, itens_nao_localizados, df, indice):
     time.sleep(1)
 
     try:
-        celulas_data = driver.find_elements(By.XPATH, "//td[@aria-describedby='Grid_Coluna1']")
-        celulas_tipo = driver.find_elements(By.XPATH, "//td[@aria-describedby='Grid_Coluna2']")
-        print(f"Total de registros encontrados: {len(celulas_data)}")
+        celulas_vigencia = driver.find_elements(By.XPATH, "//td[@aria-describedby='GridConsulta_InicioVigencia']")
+        celulas_produto  = driver.find_elements(By.XPATH, "//td[@aria-describedby='GridConsulta_Produto1']")
+        print(f"Total de linhas encontradas: {len(celulas_vigencia)}")
 
-        if len(celulas_data) == 0:
+        if len(celulas_vigencia) == 0:
             try:
                 driver.switch_to.default_content()
                 botao_alerta = WebDriverWait(driver, 5).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "button.swal2-confirm.btn.btn-success"))
                 )
                 botao_alerta.click()
-                print(f"CRITERIO 3 NAO LOCALIZADO NO SISTEMA: {valor_criterio_3}")
+                print(f"NOME NAO LOCALIZADO NO SITE: {criterio_3}")
             except TimeoutException:
                 pass
 
             itens_nao_localizados.append(indice)
             driver.switch_to.frame("ZonaInterna")
-            return None, "resultado_3"
+            return None, "NAO LOCALIZADO"
 
-        data_referencia_excel = df.loc[indice, "CAMPO3"]
-        tipo_referencia_excel = str(df.loc[indice, "CAMPO7"]).strip()
+        vigencia_excel = df.loc[indice, "CAMPO3"]
+        produto_excel  = str(df.loc[indice, "CAMPO7"]).strip()
 
-        if isinstance(data_referencia_excel, (datetime.datetime, pd.Timestamp)):
-            data_excel = data_referencia_excel.to_pydatetime() if hasattr(data_referencia_excel, "to_pydatetime") else data_referencia_excel
-            data_referencia_str = data_excel.strftime("%d/%m/%Y")
+        if isinstance(vigencia_excel, (datetime.datetime, pd.Timestamp)):
+            data_excel = vigencia_excel.to_pydatetime() if hasattr(vigencia_excel, "to_pydatetime") else vigencia_excel
+            vigencia_excel_str = data_excel.strftime("%d/%m/%Y")
         else:
-            data_referencia_str = str(data_referencia_excel).strip()
+            vigencia_excel_str = str(vigencia_excel).strip()
             try:
-                data_excel = datetime.datetime.strptime(data_referencia_str, "%d/%m/%Y")
+                data_excel = datetime.datetime.strptime(vigencia_excel_str, "%d/%m/%Y")
             except ValueError:
-                data_excel = datetime.datetime.strptime(data_referencia_str, "%d/%m/%y")
+                data_excel = datetime.datetime.strptime(vigencia_excel_str, "%d/%m/%y")
 
-        registro_encontrado = None
-        resultado_parcial   = None
+        linha_cadastro    = None
+        resultado_parcial = None
 
-        for celula_data, celula_tipo in zip(celulas_data, celulas_tipo):
-            driver.execute_script("arguments[0].scrollIntoView(true);", celula_data)
+        for celula_vig, celula_prod in zip(celulas_vigencia, celulas_produto):
+            driver.execute_script("arguments[0].scrollIntoView(true);", celula_vig)
             time.sleep(0.3)
 
-            data_sistema = celula_data.get_attribute("title").strip()
-            tipo_sistema = celula_tipo.text.strip()
+            vigencia_site = celula_vig.get_attribute("title").strip()
+            produto_site  = celula_prod.text.strip()
 
             try:
-                data_site = datetime.datetime.strptime(data_sistema, "%d/%m/%Y")
+                data_site = datetime.datetime.strptime(vigencia_site, "%d/%m/%Y")
             except ValueError:
-                data_site = datetime.datetime.strptime(data_sistema, "%d/%m/%y")
+                data_site = datetime.datetime.strptime(vigencia_site, "%d/%m/%y")
 
-            print(f"Sistema → Data referencia: {data_sistema} | Tipo: {tipo_sistema}")
+            print(f"Site → Início vigência: {vigencia_site} | produto: {produto_site}")
 
-            data_igual = (data_site.day == data_excel.day and
-                          data_site.month == data_excel.month and
-                          data_site.year  == data_excel.year)
-            tipo_igual = (tipo_sistema == tipo_referencia_excel)
+            data_igual    = (data_site.day == data_excel.day and
+                             data_site.month == data_excel.month and
+                             data_site.year  == data_excel.year)
+            produto_igual = (produto_site == produto_excel)
 
-            if data_igual and tipo_igual:
-                print("Registro localizado com data e tipo corretos!")
-                return celula_data, "resultado_1"
-            elif data_igual and not tipo_igual:
-                resultado_parcial = (celula_data, "resultado_2")
+            if data_igual and produto_igual:
+                print("Localizado com início de vigência e produto corretos!")
+                return celula_vig, "LOCALIZADO"
+            elif data_igual and not produto_igual:
+                resultado_parcial = (celula_vig, "INICIO VIGENCIA IGUAL, PRODUTO DIFERENTE")
 
         if resultado_parcial:
-            print("Data de referencia igual mas tipo diferente.")
+            print("Início de vigência igual mas produto diferente.")
             return resultado_parcial
 
-        print(f"Nenhum registro com data {data_referencia_str} e tipo {tipo_referencia_excel}")
+        print(f"Nenhuma linha com início de vigência {vigencia_excel_str} e produto {produto_excel}")
         itens_nao_localizados.append(indice)
-        return None, "resultado_3"
+        return None, "NAO LOCALIZADO"
 
     except TimeoutException:
         driver.switch_to.default_content()
@@ -314,68 +308,64 @@ def localizar_registro_por_criterio_3(valor_criterio_3, itens_nao_localizados, d
         )
         botao_alerta.click()
         itens_nao_localizados.append(indice)
-        print(f"INDICE NAO LOCALIZADO: {indice}")
-        switch_to_iframe_with_element("#seletor_criterio_3")
-        return None, "resultado_3"
+        print(f"ÍNDICE NAO LOCALIZADO: {indice}")
+        switch_to_iframe_with_element("#Nome")
+        return None, "NAO LOCALIZADO"
 
 
-def buscar_por_criterio_3(valor_criterio_3, pendentes_criterio_3, df, indice):
+def buscar_criterio_3(criterio_3, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice):
     time.sleep(1)
 
-    def _buscar(tentativa=1, max_tentativas=3):
+    for tentativa in range(1, 4):
         try:
-            campo_busca = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "#seletor_criterio_3"))
+            barra_pesquisa_nome = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "#Nome"))
             )
-            campo_busca.click()
-            campo_busca.clear()
-            campo_busca.send_keys(str(valor_criterio_3))
-            campo_busca.send_keys(Keys.ENTER)
+            barra_pesquisa_nome.click()
+            barra_pesquisa_nome.clear()
+            barra_pesquisa_nome.send_keys(str(criterio_3))
+            barra_pesquisa_nome.send_keys(Keys.ENTER)
 
-            print(f"Consulta realizada para criterio_3: {valor_criterio_3}")
+            print(f"Consulta realizada para o nome/razão social {criterio_3}")
 
-            return localizar_registro_por_criterio_3(
-                valor_criterio_3, pendentes_criterio_3, df, indice
+            return localizar_linha_cadastro_pelo_criterio_3(
+                criterio_3, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice
             )
 
         except TimeoutException:
-            print(f"Timeout na tentativa {tentativa}/{max_tentativas} para criterio_3: {valor_criterio_3}")
-            if tentativa < max_tentativas:
+            print(f"Timeout na tentativa {tentativa}/3 para nome/razão social {criterio_3}")
+            if tentativa < 3:
                 time.sleep(2)
-                return _buscar(tentativa + 1, max_tentativas)
-            else:
-                print(f"Todas as tentativas esgotadas para criterio_3: {valor_criterio_3}")
-                return False
 
-        except Exception as e:
-            print(f"Erro ao buscar criterio_3 {valor_criterio_3}: {e}")
-            return False
-
-    return _buscar()
+                raise Exception(f"Tentativas esgotadas para nome {criterio_3}")
 
 
-def abrir_registro(registro):
+    print(f"Todas as tentativas esgotadas para nome/razão social {criterio_3}")
+    raise Exception(f"Tentativas esgotadas para nome {criterio_3}")
+
+
+def abrir_cadastro(linha_cadastro):
     time.sleep(1)
 
-    tag = registro.tag_name.lower()
+    tag = linha_cadastro.tag_name.lower()
     if tag == "td":
-        elemento_clicavel = registro.find_element(By.XPATH, "./ancestor::tr[1]")
+        linha_para_clicar = linha_cadastro.find_element(By.XPATH, "./ancestor::tr[1]")
         print("Elemento era <td>, subindo para <tr> pai")
     else:
-        elemento_clicavel = registro
+        linha_para_clicar = linha_cadastro
 
-    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", elemento_clicavel)
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", linha_para_clicar)
     time.sleep(0.5)
 
     try:
         actions = ActionChains(driver)
-        actions.double_click(elemento_clicavel).perform()
+        actions.double_click(linha_para_clicar).perform()
     except Exception:
         print("double_click normal falhou, tentando via JavaScript...")
         driver.execute_script("""
             var evt = new MouseEvent('dblclick', {bubbles: true, cancelable: true});
             arguments[0].dispatchEvent(evt);
-        """, elemento_clicavel)
+        """, linha_para_clicar)
 
     driver.switch_to.default_content()
 
@@ -392,136 +382,136 @@ def abrir_registro(registro):
         lambda d: d.execute_script('return document.readyState') == 'complete'
     )
 
-    print("Entrando no iframe de conteudo (nivel 1)...")
+    print("Entrando no iframe ZonaInterna (nível 1)...")
     WebDriverWait(driver, 30).until(
         EC.frame_to_be_available_and_switch_to_it((By.ID, "ZonaInterna"))
     )
 
-    print("Entrando no iframe de conteudo (nivel 2, aninhado)...")
+    print("Entrando no iframe ZonaInterna (nível 2, aninhado)...")
     WebDriverWait(driver, 30).until(
         EC.frame_to_be_available_and_switch_to_it((By.ID, "ZonaInterna"))
     )
 
 
-def verificar_campo_a():
+def verificar_campo_1():
     try:
-        elemento = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'select2-campo_a-container')]"))
+        campo_1_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'select2-Documento_GrupoHierarquicoSelect-container')]"))
         )
-        valor = elemento.get_attribute("title")
-        print("CAMPO A LOCALIZADO:", valor)
-        return valor
+        campo_1_texto = campo_1_element.get_attribute("title")
+        print("CAMPO_1 LOCALIZADO:", campo_1_texto)
+        return campo_1_texto
 
     except StaleElementReferenceException:
-        elemento = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'select2-campo_a-container')]"))
+        campo_1_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'select2-Documento_GrupoHierarquicoSelect-container')]"))
         )
-        valor = elemento.get_attribute("title")
-        print("CAMPO A RELOCALIZADO:", valor)
-        return valor
+        campo_1_texto = campo_1_element.get_attribute("title")
+        print("CAMPO_1 RELOCALIZADO", campo_1_texto)
+        return campo_1_texto
 
     except TimeoutException:
-        print("Tempo esgotado para localizar campo A")
+        print("Tempo esgotado para localizar grupo prod")
 
     except Exception as e:
-        print("Erro ao localizar campo A:", e)
+        print("Erro ao localizar grupo prod:", e)
 
 
-def verificar_campo_b():
+def verificar_campo_2():
     try:
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIV_campo_b')]"))
+            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIVDocumento_campo_2')]"))
         )
-        print("CAMPO B LOCALIZADO")
+        print("CAMPO_2 LOCALIZADO")
 
-        opcoes = [
-            driver.find_element(By.CSS_SELECTOR, "#campo_b_1"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_b_2"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_b_3"),
+        radios = [
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_21"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_22"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_23"),
         ]
 
-        for opcao in opcoes:
-            if opcao.is_selected():
-                rotulo = driver.find_element(By.CSS_SELECTOR, f"label[for='{opcao.get_attribute('id')}']")
-                valor = rotulo.text
-                print(f"Selecionado: {valor}")
-                return valor
-
-    except StaleElementReferenceException:
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIV_campo_b')]"))
-        )
-        print("CAMPO B RELOCALIZADO")
-
-        opcoes = [
-            driver.find_element(By.CSS_SELECTOR, "#campo_b_1"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_b_2"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_b_3"),
-        ]
-
-        for opcao in opcoes:
-            if opcao.is_selected():
-                rotulo = driver.find_element(By.CSS_SELECTOR, f"label[for='{opcao.get_attribute('id')}']")
-                valor = rotulo.text
-                print(f"Selecionado: {valor}")
-                return valor
-
-    except TimeoutException:
-        print("Tempo esgotado para localizar campo B")
-
-    except Exception as e:
-        print("Erro ao localizar campo B:", e)
-
-
-def verificar_campo_c():
-    try:
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIV_campo_c')]"))
-        )
-        print("CAMPO C LOCALIZADO")
-
-        opcoes = [
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_1"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_2"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_3"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_4"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_5"),
-        ]
-
-        for opcao in opcoes:
-            if opcao.is_selected():
-                rotulo = driver.find_element(By.CSS_SELECTOR, f"label[for='{opcao.get_attribute('id')}']")
-                valor = rotulo.text
-                print(f"Selecionado: {valor}")
-                return valor
+        for radio in radios:
+            if radio.is_selected():
+                label = driver.find_element(By.CSS_SELECTOR, f"label[for='{radio.get_attribute('id')}']")
+                campo_2_texto = label.text
+                print(f"Selecionado: {campo_2_texto}")
+                return campo_2_texto
 
     except StaleElementReferenceException:
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIV_campo_c')]"))
+            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIVDocumento_campo_2')]"))
         )
-        print("CAMPO C RELOCALIZADO")
+        print("CAMPO_2 RELOCALIZADO")
 
-        opcoes = [
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_1"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_2"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_3"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_4"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_5"),
-            driver.find_element(By.CSS_SELECTOR, "#campo_c_6"),
+        radios = [
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_21"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_22"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_23"),
         ]
 
-        for opcao in opcoes:
-            if opcao.is_selected():
-                rotulo = driver.find_element(By.CSS_SELECTOR, f"label[for='{opcao.get_attribute('id')}']")
-                valor = rotulo.text
-                print(f"Selecionado: {valor}")
-                return valor
+        for radio in radios:
+            if radio.is_selected():
+                label = driver.find_element(By.CSS_SELECTOR, f"label[for='{radio.get_attribute('id')}']")
+                campo_2_texto = label.text
+                print(f"Selecionado: {campo_2_texto}")
+                return campo_2_texto
 
     except TimeoutException:
-        print("Tempo esgotado para localizar campo C")
+        print("Tempo esgotado para localizar tipo neg")
 
     except Exception as e:
-        print("Erro ao localizar campo C:", e)
+        print("Erro ao localizar tipo neg:", e)
+
+
+def verificar_campo_3():
+    try:
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIVDocumento_campo_3')]"))
+        )
+        print("CAMPO_3 LOCALIZADO")
+
+        radios = [
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_31"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_32"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_33"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_35"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_36"),
+        ]
+
+        for radio in radios:
+            if radio.is_selected():
+                label = driver.find_element(By.CSS_SELECTOR, f"label[for='{radio.get_attribute('id')}']")
+                campo_3_texto = label.text
+                print(f"Selecionado: {campo_3_texto}")
+                return campo_3_texto
+
+    except StaleElementReferenceException:
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(@id, 'DIVDocumento_campo_3')]"))
+        )
+        print("CAMPO_3 RELOCALIZADO")
+
+        radios = [
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_31"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_32"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_33"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_35"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_36"),
+            driver.find_element(By.CSS_SELECTOR, "#Documento_campo_37"),
+        ]
+
+        for radio in radios:
+            if radio.is_selected():
+                label = driver.find_element(By.CSS_SELECTOR, f"label[for='{radio.get_attribute('id')}']")
+                campo_3_texto = label.text
+                print(f"Selecionado: {campo_3_texto}")
+                return campo_3_texto
+
+    except TimeoutException:
+        print("Tempo esgotado para localizar campo_3")
+
+    except Exception as e:
+        print("Erro ao localizar campo_3:", e)
 
 
 def voltar_para_a_busca():
@@ -544,16 +534,16 @@ def voltar_para_a_busca():
         print("Voltando para a busca (RELOCALIZADO)...")
 
     except TimeoutException:
-        print("Tempo esgotado para localizar botao de voltar")
+        print("Tempo esgotado para localizar botão de voltar")
 
     except Exception as e:
-        print("Erro ao clicar no botao de voltar:", e)
+        print("Erro ao clicar no botão de voltar:", e)
 
 
-def mudar_modo_busca(modo):
+def mudar_tipo_busca(tipo):
     try:
         container = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#select2-seletor_modo_busca-container"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#select2-TipoConsulta2-container"))
         )
         container.click()
 
@@ -562,13 +552,15 @@ def mudar_modo_busca(modo):
         )
         barra.click()
         barra.clear()
-        barra.send_keys(modo)
+        barra.send_keys(tipo)
 
         opcao = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.XPATH, "//*[contains(@id, 'select2-seletor_modo_busca-result-')]"))
+            EC.visibility_of_element_located((By.XPATH, "//*[contains(@id, 'select2-TipoConsulta2-result-')]"))
         )
         opcao.click()
-        print(f"Modo de busca alterado para: {modo}")
+        print(f"Tipo de busca alterado para: {tipo}")
 
     except Exception as e:
-        print(f"Erro ao mudar modo de busca para {modo}:", e)
+        print(f"Erro ao mudar tipo de busca para {tipo}:", e)
+
+
