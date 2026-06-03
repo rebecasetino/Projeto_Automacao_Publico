@@ -1,18 +1,21 @@
-def comparar_campo_a(valor_sistema, valor_planilha):
-    if not valor_sistema or not valor_planilha:
+def comparar_campo_1(texto_site, texto_excel):
+    if not texto_site or not texto_excel:
         return "DADO AUSENTE"
 
-    valor_planilha_str = str(valor_planilha).strip()
-    if "-" in valor_planilha_str:
-        valor_planilha_limpo = valor_planilha_str.split("-", 1)[1].strip()
+    # tira o código numérico e o hífen do Excel (ex: "126213-CORRETORA..." → "CORRETORA...")
+    texto_excel_str = str(texto_excel).strip()
+    if "-" in texto_excel_str:
+        texto_excel_limpo = texto_excel_str.split("-", 1)[1].strip()
     else:
-        valor_planilha_limpo = valor_planilha_str
+        texto_excel_limpo = texto_excel_str
 
-    valor_planilha_limpo = valor_planilha_limpo[:48]
+    # limita a 48 caracteres
+    texto_excel_limpo = texto_excel_limpo[:48]
 
-    valor_sistema_limpo = valor_sistema.strip()
+    # texto do site já vem limpo
+    texto_site_limpo = texto_site.strip()
 
-    if valor_planilha_limpo == valor_sistema_limpo or valor_planilha_limpo.startswith(valor_sistema_limpo):
+    if texto_excel_limpo == texto_site_limpo or texto_excel_limpo.startswith(texto_site_limpo):
         return "IGUAL"
     else:
         return "DIFERENTE"
