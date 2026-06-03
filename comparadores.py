@@ -2,7 +2,7 @@ def comparar_campo_1(texto_site, texto_excel):
     if not texto_site or not texto_excel:
         return "DADO AUSENTE"
 
-    # tira o código numérico e o hífen do Excel (ex: "126213-CORRETORA..." → "CORRETORA...")
+    # tira o código numérico e o hífen do Excel 
     texto_excel_str = str(texto_excel).strip()
     if "-" in texto_excel_str:
         texto_excel_limpo = texto_excel_str.split("-", 1)[1].strip()
