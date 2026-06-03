@@ -125,7 +125,7 @@ def buscar_criterio_1(numero_criterio_1, busca_criterio_2_criterio_1_nao_localiz
     raise Exception(f"Tentativas esgotadas para criterio_1 {numero_criterio_1}")
 
 
-def localizar_linha_cadastro_pelo_criterio_2(criterio_2, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice):
+def localizar_linha_cadastro_pelo_criterio_2(criterio_2, busca_criterio_3_criterio_3_criterio_2s_nao_localizados, df, indice):
     time.sleep(1)
 
     try:
@@ -143,7 +143,7 @@ def localizar_linha_cadastro_pelo_criterio_2(criterio_2, busca_nome_criterio_3_c
             except TimeoutException:
                 pass
 
-            busca_nome_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
+            busca_criterio_3_criterio_2_nao_localizados.append({"indice": indice})
             driver.switch_to.frame("ZonaInterna")
             return None
 
@@ -181,7 +181,7 @@ def localizar_linha_cadastro_pelo_criterio_2(criterio_2, busca_nome_criterio_3_c
             return linha_cadastro
         else:
             print(f"criterio_2 {criterio_2} encontrado no site, mas vigência {data_excel.month:02d}/{data_excel.year} não bate")
-            busca_nome_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
+            busca_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
             return None
 
     except TimeoutException:
@@ -193,13 +193,13 @@ def localizar_linha_cadastro_pelo_criterio_2(criterio_2, busca_nome_criterio_3_c
             botao_alerta.click()
         except TimeoutException:
             pass
-        busca_nome_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
+        busca_criterio_3_criterio_2s_nao_localizados.append({"indice": indice})
         print(f"criterio_2 NAO LOCALIZADO: {criterio_2}")
         driver.switch_to.frame("ZonaInterna")
         return None
 
 
-def buscar_criterio_2(criterio_2, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice):
+def buscar_criterio_2(criterio_2, busca_criterio_3_criterio_3_criterio_2s_nao_localizados, df, indice):
     time.sleep(1)
 
     for tentativa in range(1, 4):
@@ -215,7 +215,7 @@ def buscar_criterio_2(criterio_2, busca_nome_criterio_3_criterio_2s_nao_localiza
             print(f"Consulta realizada para o criterio_2 {criterio_2}")
 
             return localizar_linha_cadastro_pelo_criterio_2(
-                criterio_2, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice
+                criterio_2, busca_criterio_3_criterio_3_criterio_2s_nao_localizados, df, indice
             )
 
         except TimeoutException:
@@ -244,7 +244,7 @@ def localizar_linha_cadastro_pelo_criterio_3(criterio_3, itens_nao_localizados, 
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "button.swal2-confirm.btn.btn-success"))
                 )
                 botao_alerta.click()
-                print(f"NOME NAO LOCALIZADO NO SITE: {criterio_3}")
+                print(f"CRITERIO 3 NAO LOCALIZADO NO SITE: {criterio_3}")
             except TimeoutException:
                 pass
 
@@ -309,39 +309,39 @@ def localizar_linha_cadastro_pelo_criterio_3(criterio_3, itens_nao_localizados, 
         botao_alerta.click()
         itens_nao_localizados.append(indice)
         print(f"ÍNDICE NAO LOCALIZADO: {indice}")
-        switch_to_iframe_with_element("#Nome")
+        switch_to_iframe_with_element("#criterio3")
         return None, "NAO LOCALIZADO"
 
 
-def buscar_criterio_3(criterio_3, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice):
+def buscar_criterio_3(criterio_3, busca_criterio_3_criterio_2_nao_localizados, df, indice):
     time.sleep(1)
 
     for tentativa in range(1, 4):
         try:
-            barra_pesquisa_nome = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "#Nome"))
+            barra_pesquisa_criterio_3 = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "#criterio_3"))
             )
-            barra_pesquisa_nome.click()
-            barra_pesquisa_nome.clear()
-            barra_pesquisa_nome.send_keys(str(criterio_3))
-            barra_pesquisa_nome.send_keys(Keys.ENTER)
+            barra_pesquisa_criterio_3.click()
+            barra_pesquisa_criterio_3.clear()
+            barra_pesquisa_criterio_3.send_keys(str(criterio_3))
+            barra_pesquisa_criterio_3.send_keys(Keys.ENTER)
 
-            print(f"Consulta realizada para o nome/razão social {criterio_3}")
+            print(f"Consulta realizada para o criterio_3/ {criterio_3}")
 
             return localizar_linha_cadastro_pelo_criterio_3(
-                criterio_3, busca_nome_criterio_3_criterio_2s_nao_localizados, df, indice
+                criterio_3, busca_criterio_3_criterio_3_criterio_2s_nao_localizados, df, indice
             )
 
         except TimeoutException:
-            print(f"Timeout na tentativa {tentativa}/3 para nome/razão social {criterio_3}")
+            print(f"Timeout na tentativa {tentativa}/3 para criterio_3/ {criterio_3}")
             if tentativa < 3:
                 time.sleep(2)
 
-                raise Exception(f"Tentativas esgotadas para nome {criterio_3}")
+                raise Exception(f"Tentativas esgotadas para criterio_3 {criterio_3}")
 
 
-    print(f"Todas as tentativas esgotadas para nome/razão social {criterio_3}")
-    raise Exception(f"Tentativas esgotadas para nome {criterio_3}")
+    print(f"Todas as tentativas esgotadas para criterio_3/ {criterio_3}")
+    raise Exception(f"Tentativas esgotadas para criterio_3 {criterio_3}")
 
 
 def abrir_cadastro(linha_cadastro):
@@ -411,10 +411,10 @@ def verificar_campo_1():
         return campo_1_texto
 
     except TimeoutException:
-        print("Tempo esgotado para localizar grupo prod")
+        print("Tempo esgotado para localizar campo_1")
 
     except Exception as e:
-        print("Erro ao localizar grupo prod:", e)
+        print("Erro ao localizar campo_1:", e)
 
 
 def verificar_campo_2():
@@ -457,10 +457,10 @@ def verificar_campo_2():
                 return campo_2_texto
 
     except TimeoutException:
-        print("Tempo esgotado para localizar tipo neg")
+        print("Tempo esgotado para localizar campo_2")
 
     except Exception as e:
-        print("Erro ao localizar tipo neg:", e)
+        print("Erro ao localizar campo_2:", e)
 
 
 def verificar_campo_3():
